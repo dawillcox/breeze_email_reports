@@ -31,9 +31,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/dawillcox/breeze_email_reports"
 "Bug Tracker" = "https://github.com/dawillcox/breeze_email_reports/issues"
-README = "https://github.com/dawillcox/breeze_email_reports/blob/master/README.md"
-DOCUMENTATION = "https://github.com/dawillcox/breeze_email_reports/blob/master/DOCUMENTATION.md"
-Changelog = "https://github.com/dawillcox/breeze_email_reports/blob/master/CHANGELOG.md"
+README = "https://github.com/dawillcox/breeze_email_reports/blob/master/README.rst"
+DOCUMENTATION = "https://github.com/dawillcox/breeze_email_reports/blob/master/DOCUMENTATION.rst"
+CHANGELOG = "https://github.com/dawillcox/breeze_email_reports/blob/master/CHANGELOG.md"
 REPOSITORY = "https://github.com/dawillcox/breeze_email_reports.git"
 
 [project.scripts]
