@@ -20,6 +20,7 @@ Table of Contents
     * `Breeze CHMS API`_
 * `Configuring the Utilities`_
     * `Email Profile Report Command`_
+* `Automatically Running Commands`_
 
 ---------
 Email Profile Report
@@ -392,3 +393,38 @@ data (values from previous runs) in a ``BreezeProfiles`` subdirectory of
 the user configuration directory.
 
 This default can be overridden using the ``--data`` option to the command.
+
+----------
+Automatically Running Commands
+----------
+So now that you understand what this utility needs to do, how do you run it? While you can
+run it manually from time to time, it would make sense to have it run automatically on some schedule,
+say late at night on a Sunday when there probably aren't updates happening.
+
+First, obviously, you'll need to install the Python language. It may have come preinstalled
+on your system, but if so it's likely an old version. If you don't already have at least Python 3.7
+installed, you should install a later version. As of this writing, 3.11 is the latest
+production version. You can download Python from
+`the python.org download page <https://www.python.org/downloads/>`_.
+
+The next decision is: do you want to install this (and the dependencies)
+system-wide or just your own use? If it's just you (or a few others
+working on a common project), installing it on the system should be fine.
+Otherwise, I'd suggest you use a
+`Python virtual environment
+<https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/>`_.
+Explaining that is beyond the scope of this document, but basically it's
+a complete Python environment, with its own installed packages, independent
+of the system-installed packages. You can run your command in said environment.
+
+On Unix-based systems including MacOS and Linux you can use crontab to
+schedule your command to run at appropriate times. For example, I have
+the script run every Sunday night at 11pm, so I have a crontab entry like this:
+
+    0 23 * * 0 <path to the comand>/email_profile_report -f me -t people... <other settings>
+
+If you're running the command in a virtual environment you'll need to do something
+to activate the environment before running ``email_profile_report``.
+
+I don't "do" Windows, but it appears that it has a similar facility to
+run tasks on a schedule.
