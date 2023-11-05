@@ -322,14 +322,11 @@ to send the email report. To do this, it needs two key bits of information:
   is at least the user's password, but can also be a user ID if it
   isn't just the outgoing email address.
 
-All files should be in a ``MailSender`` under the site or user configuration
-directory.
-
 configured_mail_sender_ has built-in knowledge of several common email domains,
 including google.com, yahoo.com, aol.com, hotmail.com, outlook.com, and comcast.net.
 If your email domain isn't known, you'll need to create a ``mailsender_domains.yml``
-file in a ``MailSender`` of either the site or user configuration directory.
-(The former is advised so the configuration can be used by others.) It will use
+file in a ``MailSender`` directory under either the site or user configuration directory.
+(The former is advised so the configuration can be used by others.) It will look in
 both files if both are present, though the user-specific fill will override
 the system one if there are conflicts.
 
