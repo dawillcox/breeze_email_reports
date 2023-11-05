@@ -1,12 +1,12 @@
-==============
+============================
 Breeze Email Reports Details
-==============
+============================
 
 Here's documentations for the utilities in this package. (There's only one currently. Others may be forthcoming.)
 
----------
+-----------------
 Table of Contents
----------
+-----------------
 
 * `Email Profile Report`_
     * `Report Formats`_
@@ -22,9 +22,9 @@ Table of Contents
     * `Email Profile Report Command`_
 * `Automatically Running Commands`_
 
----------
+--------------------
 Email Profile Report
----------
+--------------------
 
 The ``email_profile_report`` utility emails a report of changes to your Breeze profile data between runs.
 Ir can send its report in three formats:
@@ -97,21 +97,21 @@ Note that some fields can have multiple values. Any values that didn't change wo
 be in the report, only those that were added, removed, or changed.
 
 
-++++++++
+++++++++++++++
 Report Formats
-++++++++
+++++++++++++++
 
-!!!!!!!!
+!!!!!!!!!!!
 HTML Format
-!!!!!!!!
+!!!!!!!!!!!
 
 The default HTML format looks like this (generated from test data).
 
 .. image:: SampleHTMLReport.jpg
 
-!!!!!!!!
+!!!!!!!!!!!
 Text Format
-!!!!!!!!
+!!!!!!!!!!!
 
 Text format for the same data appears thus::
 
@@ -211,9 +211,9 @@ Text format for the same data appears thus::
        |                              |+(Spouse)           |                    |
        |------------------------------|--------------------|--------------------|
 
-!!!!!!!!
+!!!!!!!!!!
 CSV Format
-!!!!!!!!
+!!!!!!!!!!
 And the csv attachment thus::
 
     "Alast, Firstname1"
@@ -256,9 +256,9 @@ And the csv attachment thus::
     ,family,"Coxwell, Duveed (Spouse)",
     ,,"Coxwill, Eileen (Spouse)",
 
---------
+------------------------------
 Configuring Dependent Packages
---------
+------------------------------
 The utilities in this package store historical data between runs, and a number
 of packages they depend on for proper operation need to load configuration
 files for their proper operation.
@@ -285,9 +285,9 @@ You should see the documentation for each package for more complete
 information about how to configure each, but the following sections
 should give you enough detail to make things work.
 
-+++++++++++
+++++++++++++
 Platformdirs
-+++++++++++
+++++++++++++
 The platformdirs_ package defines where user and system configuration
 and data files are normally stored on various platforms. The package defines
 many directories for different purposes. Consult the package documentation
@@ -311,9 +311,9 @@ configurations are in a subdirectory of the main user or site configuration
 directory.
 
 
-+++++++++
+++++++++++++++++++++++
 Configured Mail Sender
-+++++++++
+++++++++++++++++++++++
 ``breeze_profile_reports`` depends on the configured_mail_sender_ package
 to send the email report. To do this, it needs two key bits of information:
 
@@ -360,9 +360,9 @@ special complex passwords different from the one that you usually use
 to login to their site. I recommend using that if possible. If that password
 gets compromised you can disable it without impacting your normal login.
 
-++++++++
++++++++++++++++
 Breeze CHMS API
-++++++++
++++++++++++++++
 The breeze_chms_api_ package provides the interface ``email_profile_reports``
 to download information from your Breeze instance. For this it needs the URL
 where you contact Breeze, generally ``yourchurchname.breezechms.com``. You'll
@@ -381,12 +381,12 @@ The file should look like this::
     breeze_url: yourchurchname.breezechms.com # Or whatever you have
     api_key: YourApiKey
 
-----------
+-------------------------
 Configuring the Utilities
-----------
-++++++++
+-------------------------
+++++++++++++++++++++++++++++
 Email Profile Report Command
-++++++++
+++++++++++++++++++++++++++++
 While packages used by ``breeze_profile_reports`` need configuration information,
 the command itself does not. It does, however, store its historical
 data (values from previous runs) in a ``BreezeProfiles`` subdirectory of
@@ -394,9 +394,9 @@ the user configuration directory.
 
 This default can be overridden using the ``--data`` option to the command.
 
-----------
+------------------------------
 Automatically Running Commands
-----------
+------------------------------
 So now that you understand what this utility needs to do, how do you run it? While you can
 run it manually from time to time, it would make sense to have it run automatically on some schedule,
 say late at night on a Sunday when there probably aren't updates happening.
@@ -419,12 +419,23 @@ of the system-installed packages. You can run your command in said environment.
 
 On Unix-based systems including MacOS and Linux you can use crontab to
 schedule your command to run at appropriate times. For example, I have
-the script run every Sunday night at 11pm, so I have a crontab entry like this:
+the script run every Sunday night at 11pm, so I have a crontab entry like this::
 
-    0 23 * * 0 <path to the comand>/email_profile_report -f me -t people... <other settings>
+    0 23 * * 0 email_profile_report -f me -t people... <other settings>
 
 If you're running the command in a virtual environment you'll need to do something
-to activate the environment before running ``email_profile_report``.
+to activate the environment before running ``email_profile_report``. In that case,
+this seems to work for me::
+
+    0 23 * * 0 bash -c ". <path to your virtual environment>/bin/activate;email_profile_report <parameters>"
+
+By the way first five symbols on that line say when to run the command, and are:
+
+* Hour zero in the hour
+* Hour 23 (11 PM)
+* Any day of the month
+* Any month of the year
+* On day zero of the week (Sunday)
 
 I don't "do" Windows, but it appears that it has a similar facility to
 run tasks on a schedule.

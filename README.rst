@@ -1,6 +1,6 @@
-===============
+====================
 Breeze Email Reports
-===============
+====================
 The Breeze Church Management System (CHMS) is used by many churches to manage
 their operations. Breeze has modules to support (not necessarily a complete list):
 
@@ -30,4 +30,4 @@ but to make it easier for users some basic detail is included in the documentati
 
 See DOCUMENTATION_ for details on use how to set up and use these reports.
 
-.. _DOCUMENTATION: ./DOCUMENTATION.rst
+.. _DOCUMENTATION: https://github.com/dawillcox/breeze_email_reports/blob/main/DOCUMENTATION.rst

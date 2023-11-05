@@ -1,20 +1,20 @@
 [build-system]
-requires = ['setuptools>=61.0',
-            'combine_settings>=1.0.1',
-            'breeze_chms_api>=1.2.0',
-            'configured_mail_sender>=1.0.1',
+requires = ["setuptools>=61.0",
+            "combine_settings>=1.0.1",
+            "breeze_chms_api>=1.2.0",
+            "configured_mail_sender>=1.0.1",
             ]
-build-backend = 'setuptools.build_meta'
+build-backend = "setuptools.build_meta"
 
 [project]
-name = 'breeze_email_reports'
-version = '1.0.0'
+name = "breeze_email_reports"
+version = "1.0.0"
 authors = [
   { name="David A. Willcox", email="daw30410@yahoo.com" },
 ]
-description = 'Command-line utilities to email Breeze CHMS reports'
-readme = 'README.rst'
-license = { file='LICENSE' }
+description = "Utilities to email Breeze CHMS reports"
+readme = "README.rst"
+license = { file="LICENSE" }
 requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -25,7 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "breeze_chms_api>=1.2.0",
-    "configured_mail_sender>=1.0.1"
+    "configured_mail_sender>=1.0.2"
 ]
 
 [project.urls]
