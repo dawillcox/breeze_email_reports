@@ -21,6 +21,15 @@ Table of Contents
 * `Configuring the Utilities`_
     * `Email Profile Report Command`_
 * `Automatically Running Commands`_
+* `Simple Setup`_
+    * `Install Python`_
+    * `Python Environment - Virtual or Not`_
+    * `Install breeze_email_reports`_
+    * `Find Directories Used`_
+    * `Set Up Your Sending Email Address`_
+    * `Set Your Breeze Credentials`_
+    * `Initialize Data File`_
+    * `Run a Report`_
 
 --------------------
 Email Profile Report
@@ -436,3 +445,229 @@ By the way first five symbols on that line say when to run the command, and are:
 
 I don't "do" Windows, but it appears that it has a similar facility to
 run tasks on a schedule.
+
+------------
+Simple Setup
+------------
+All of the above is correct, but probably intimidating. This is an attempt at a
+more tutorial-like walk-through of the steps required to get this running.
+
+++++++++++++++
+Install Python
+++++++++++++++
+
+Since this is a Python program, you'll need the Python interpreter on the
+computer where you plan to run these scripts. Some computers come with
+Python already installed, but it may be an older version. You should opt
+for the latest 3.x version available (3.11 is the latest as I write this),
+but no earlier than 3.6. This package has been tested with releases 3.6 through
+3.11. Later 3.x versions ought to work, but be wary.
+
+So if you don't already have Python, or only have an old version (running ``python --version``
+on a command line will tell you the installed version), you'll need to do an install.
+
+Since software installation is very different on different platforms I refer
+you to this
+`Python Installation & Setup Guide <https://realpython.com/installing-python/>`_
+that will walk you through installation on the main platforms. (Including IOS
+and Android! I wouldn't run this package there.)
+
+And a note: Because it's entirely possible to have several versions of Python
+installed on the same system, on some installations you might find that the
+command is called ``python3`` or even ``python39`` instead of just ``python``.
+Substitute the real name for any reference to the ``python`` command in
+the following.
+
++++++++++++++++++++++++++++++++++++
+Python Environment - Virtual or Not
++++++++++++++++++++++++++++++++++++
+
+If you are the only user of your computer and you're unlikely to run anything
+else that needs Python, or other users of your computer are unlikely to use
+Pyton, you can skip this section. You won't be using a "virtual environment,"
+so ignore references to that in later sections.
+
+But here's a very brief explanation of virtual environments:
+
+By default, when you install a Python package (``breeze_email_reports``, for example)
+they're installed at the site level. On a computer with multiple users, that
+usually requires administrative privilege. If different users need different packages
+there's always the possibility of conflicts among package dependencies.
+
+And such conflicts are even possible from different needs of a single user.
+
+To address this, Python supports "virtual environments."  A virtual environment
+is almost like a separate installation of Python with its own set of
+installed packages. It's good practice to use virtual environments,
+but not essential if you're probably only going to use ``breeze_email_reports``.
+
+But here's a very short example of how this would work::
+
+    # One time only, create your virtual environment.
+    # This creates a virtual environment as a directory called my_python_environment
+    # Use whatever name you prefer.
+    python -m venv my_python_environment
+
+    # Then, to start using the virtual environment, enter:
+    source my_personal_environment/bin/activate
+
+    # You're now using your virtual environment. Any packages
+    # you install or Python scripts you run will use resources
+    # in this virtual environment. Your command line prompt
+    # may change to reflect the fact that you're using the
+    # virtual environment.
+
+    # When done, if you're done using python but won't be logging
+    # out, you can deactivate the virtual environment:
+    deactivate
+
+In the following sections, the examples assume you've already
+activated your virtual environment before running the commands.
+
+++++++++++++++++++++++++++++++++
+Install breeze_email_reports
+++++++++++++++++++++++++++++++++
+
+Installing the package is simple::
+
+    pip install --upgrade breeze_email_reports
+
+That will install the package.
+
++++++++++++++++++++++
+Find Directories Used
++++++++++++++++++++++
+
+Run the following to see where ``email_profile_report`` looks for information::
+
+    email_profile_report --list_directories
+        configured_mail_sender configuration files:
+	        /Library/Application Support/MailSender/mailsender_domains.yml
+	        /Users/me/Library/Application Support/MailSender/mailsender_domains.yml
+	        /Users/me/PycharmProjects/tmp/venv/config/MailSender/mailsender_domains.yml
+	        /Users/me/Library/Application Support/MailSender/mailsender_creds.yml
+        breeze_chms_api configuration files:
+	        /Library/Application Support/breeze_maker.yml
+	        /Users/me/Library/Application Support/breeze_maker.yml
+	        /Users/me/PycharmProjects/tmp/venv/config/breeze_maker.yml
+        email_profile_report data directory:
+	        /Users/me/Library/Application Support/BreezeProfiles
+
+Note:
+
+* The above was run on my Macintosh. The directories can be very different on your system.
+* The "``me``" is my name on my Mac.
+* I'm running in a virtual environment, so the lines with ``venv`` are specific to this environment.
+
+Remember the output on your system for later steps. You can rerun the command whenever you need.
+
+Note: The list above can be impacted if you use any of the ``email_profile_report`` options
+that tell it where to look for data. For example:
+
+* --data
+* --breeze_creds
+* --email_creds
+* --email_servers
+
+If you use *any* of these here they must be used in all ``email_profile_report`` runs.
+
++++++++++++++++++++++++++++++++++
+Set Up Your Sending Email Address
++++++++++++++++++++++++++++++++++
+
+You'll need to do all of the following for each "from" address you expect
+to use to send reports.
+
+Make sure your sending domain is known::
+
+    email_profile_report --list_domains
+        yahoo.com: smtp.mail.yahoo.com
+        aol.com: smtp.aol.com
+        gmail.com: smtp.gmail.com
+        outlook.com: smtp-mail.outlook.com
+        hotmail.com: smtp-mail.outlook.com
+        live.com: smtp-mail.outlook.com
+        comcast.net: smtp.comcast.net
+
+This prints the list of email domains currently known by
+``email_profile_report``, and the list shown here is what's
+built-in as of this writing. If your email domain (the part after
+the '@' in your sending email address) is in this list you're
+good to go. If not, you'll need to add it. Follow these instructions.
+
+Look for the file path ending in ``mailsender_domains.yml`` when you ran ``--list_directories``.
+The system-level one would be best if you have access, otherwise your own version.
+Create the file (if missing) add add the following::
+
+    <your email domain>:
+        server: <your domain's smtp server>
+        port: <server's expected port> # Only if not 587
+
+You'll have to get the smtp server and port from your email provider. It's usually easy to find.
+
+Run ``email_profile_report --list_domains`` again to make sure it sees your domain now.
+
+Once you've verified that your domain is set you'll have to provide your login password.
+Look for the line that ends with ``mailsender_creds.yml``. That's where your password is stored.
+Create that directory if it doesn't already exist.
+
+*SOME IMPORTANT NOTES!*
+
+* Since your password is sensitive, make sure that your ``mailsender_creds.yml`` file can only be read by you.
+* Many email providers (Google and Yahoo among them) allow you to create single-use passwords,
+  passwords that will only be used in one place. *If at all possible do this to create a password*
+  *that will only be used to send from this computer.* Some providers may suspect fraud and block
+  your account if they see an attempt to use your password from a different place.
+
+Add the following to your ``mailsender_creds.yml`` file::
+
+    <your email address>:
+        password: <your password>
+
++++++++++++++++++++++++++++
+Set Your Breeze Credentials
++++++++++++++++++++++++++++
+
+You need to tell how to connect to Breeze. Look for one of the files
+that ends with ``breeze_maker.yml`` when you did ``--list_directories``.
+Because your Breeze credentials are sensitive (if a bad actor got ahold
+them they could wreak havoc with your data) it's best to put it your local
+file, readable only by you. Add the following to that file::
+
+    breeze_url: https://yourchurch.breezechms.com
+    api_key: <your API key>
+
+You'll have to get that key from Breeze support.
+
+++++++++++++++++++++
+Initialize Data File
+++++++++++++++++++++
+
+Before you run your first report you'll want to initialize with current data.
+Otherwise, your first report will be a full dump of all of your profiles.
+That will be large, but maybe you'd want that.
+
+But normally, initialize with::
+
+    email_profile_report --initialize
+
+This will make sure your data directory exists, then download your Breeze profiles
+and store the summary in that directory. Each subsequent run will send a report
+based on the most recent data found in that directory.
+
+Note: The raw data downloaded from Breeze can be pretty large. Depending on your
+network bandwidth and the size of your church, it can take multiple seconds. With
+a good connection my smallish church takes about 20 seconds to download. Your milage
+will vary.
+
+The data stored (compressed) for each run in our case is pretty small, only about 44K.
+
+++++++++++++
+Run a Report
+++++++++++++
+
+Now you're ready to run a report::
+
+    email_profile_report -f <address you're sending from> -t <reciuver>,<receiver>
+
+See the documentation for other options.

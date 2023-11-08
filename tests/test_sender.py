@@ -5,9 +5,13 @@ import os
 import shutil
 import unittest
 import tempfile
+# from datetime import timedelta
+from datetime import datetime, timedelta
+from io import StringIO
 from typing import Tuple, List
 import sys
 from breeze_email_reports.EmailProfileReport import main
+
 # REFERENCE_FILE_NAME = 'ReferenceData.json'
 TEST_REFERENCE_NAME = '2023-09-17T23:00:24.211429.json'
 TEST_REPLAY_NAME = '2023-10-17T23:00:24.211429.json'
@@ -26,7 +30,6 @@ TEST_CURRENT_DATA = os.path.join(TEST_FILES_DIR, 'ExpectedCurrentData.json')
 EXPECTED_TABLE = os.path.join(TEST_FILES_DIR, 'ExpectedHtml.txt')
 EXPECTED_CSV = os.path.join(TEST_FILES_DIR, 'ExpectedCSV.csv')
 EXPECTED_TEXT = os.path.join(TEST_FILES_DIR, 'ExpectedText.txt')
-
 
 TO_ADDRESS = 'to@test.com'
 BCC_ADDRESS = 'bcc1@bcc.com, bcc2@bcc.com'
@@ -57,6 +60,7 @@ class TestSender(unittest.TestCase):
         self.test_dir = tempfile.TemporaryDirectory()
         self.mock_sender = MockSender()
         self.saved_argv = sys.argv
+        self.saved_stdout = None
 
     def runTest(self,
                 report_format: str = 'text',
@@ -95,6 +99,7 @@ class TestSender(unittest.TestCase):
         sys.argv = ['test', '-f', 'from@test.com', '-t', TO_ADDRESS,
                     '-b', BCC_ADDRESS,
                     '--data', self.test_dir.name,
+                    '--log_level=critical',
                     '--format', report_format] + extra_params
 
         ret = main(breeze_api=api_mock, email_sender=self.mock_sender)
@@ -240,17 +245,18 @@ class TestSender(unittest.TestCase):
         self.assertEqual('--from=sender is required', se.exception.code)
 
     def test_no_to(self):
-        sys.argv = ['test', '-f', 'from@foobar']
+        sys.argv = ['test', '-f', 'from@foobar', ]
         with self.assertRaises(SystemExit) as se:
             main()
         self.assertEqual('Either -t or -b is required', se.exception.code)
 
     def test_bad_data(self):
         sys.argv = ['test', '-f', 'from@foobar', '-t', 'to@foobar',
+                    '--log_level=critical',
                     '--data', '/no/such/dir']
         with self.assertRaises(SystemExit) as e:
             main(email_sender=self.mock_sender)
-        self.assertEqual('/no/such/dir is not a writable directory',
+        self.assertEqual('Directory /no/such/dir doesn\'t exist',
                          e.exception.code)
 
     def test_no_previous(self):
@@ -275,23 +281,72 @@ class TestSender(unittest.TestCase):
         # with open(EXPECTED_TEXT, 'w') as f:
         #     f.write(got)
 
+    def test_retain(self):
+        now = datetime.now()
+        days = 7
+        files = [datetime.isoformat(now - timedelta(days=days + d)) + '.json'
+                 for d in [5, 1, -1, -2]]
+        for f in files:
+            shutil.copyfile(TEST_CURRENT_DATA, os.path.join(self.test_dir.name, f))
+
+        self.runTest(report_format='text',
+                     do_reference=False,
+                     extra_params=['--retain_days', str(days)])
+        retained_files = os.listdir(self.test_dir.name)
+        self.assertEqual(3, len(retained_files))
+        self.assertFalse(files[1] in retained_files)
+        self.assertTrue(files[3] in retained_files)
+
+
+
     def test_list_directories(self):
-        sys.argv = ['test', '--list_directories']
+        sys.argv = ['test', '--list_directories', '--log_level=critical']
+        self.saved_stdout = sys.stdout
+        capture_out = StringIO()
+        sys.stdout = capture_out
         with self.assertRaises(SystemExit) as e:
             main(email_sender=self.mock_sender)
-
         self.assertEqual(e.exception.code, 0,
-                         'List directories shouldn\'t cause error')
+                         "List directories shouldn't cause error")
+        sys.stdout = self.saved_stdout
+        capture_out.seek(0)
+        output = capture_out.read()
+        lines = output.split('\n')
+        self.assertEqual('configured_mail_sender configuration files:',
+                         lines[0])
+
+    def test_known_domains(self):
+        sys.argv = ['test', '--list_domains', '--log_level=critical']
+        capture_out = StringIO()
+        self.saved_stdout = sys.stdout
+        sys.stdout = capture_out
+        with self.assertRaises(SystemExit) as e:
+            main()
+        self.assertEqual(e.exception.code, 0,
+                         "List domains shouldn't cause error")
+        sys.stout = self.saved_stdout
+        capture_out.seek(0)
+        captured = capture_out.read()
+        # lines = captured.split('\n')
+        domains = {}
+        for line in captured.split('\n')[1:]:
+            line = line.replace(' ', '')
+            if line:
+                entry = line.split(':')
+                key = entry[0]
+                domains[key] = entry[1]
+        self.assertEqual('smtp.mail.yahoo.com', domains.get('yahoo.com'))
 
     def test_initialize(self):
+        os.removedirs(self.test_dir.name)
         with self.assertRaises(SystemExit) as e:
             self.runTest(extra_params=['--initialize'],
                          do_reference=False)
-        self.assertEquals(0, e.exception.code)
+        self.assertEqual(0, e.exception.code)
         self.assertIsNone(self.mock_sender.result)
         # Should get same result
         files = os.listdir(self.test_dir.name)
-        self.assertEquals(1, len(files))
+        self.assertEqual(1, len(files))
         result = files[0]
         path = os.path.join(self.test_dir.name, result)
         with gzip.open(path, 'r') as f:
@@ -301,5 +356,7 @@ class TestSender(unittest.TestCase):
         self.assertEqual(expected, saved_data)
 
     def tearDown(self):
+        if self.saved_stdout:
+            sys.stdout = self.saved_stdout
         self.test_dir.cleanup()
         sys.argv = self.saved_argv

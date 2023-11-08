@@ -1,7 +1,9 @@
 from io import StringIO
+from pathlib import Path
 from typing import List, Tuple, Dict, Union
 
-from configured_mail_sender import create_sender, MailSender
+import configured_mail_sender
+from configured_mail_sender import create_sender, MailSender, known_domains
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from breeze_chms_api.profile_helper import ProfileHelper, join_dicts, profile_compare
@@ -20,6 +22,9 @@ from breeze_email_reports.table_format import ColSpec, _HTMLFormatter, _CSVForma
 
 DEFAULT_DATA_DIR = platformdirs.user_data_dir('BreezeProfiles')
 DEFAULT_COLUMN_WIDTHS = '30,20,20'
+
+APPLICATION_NAME = 'email_profile_report'
+DEFAULT_LOG_FILE = os.path.join(platformdirs.user_log_dir(), APPLICATION_NAME + '.log')
 
 
 class ProfileData:
@@ -64,6 +69,7 @@ class ProfileFromBreeze(ProfileData):
     """
     Profile data fetched directly from Breeze.
     """
+
     def __init__(self,
                  args,
                  breeze_api: breeze.BreezeApi = None,
@@ -95,12 +101,25 @@ class ProfileFromBreeze(ProfileData):
             with gzip.open(new_file, 'w') as outfile:
                 towrite = json.dumps((self.fields_map, self.profiles), indent=2)
                 outfile.write(bytes(towrite, 'utf8'))
+            if self.args.retain_days > 0:
+                # We need to clean up old files
+                oldest_allowed = (datetime.datetime.now()
+                                  - datetime.timedelta(days=self.args.retain_days)
+                                  ).isoformat()
+                now_files = _get_previous_files(self.args)
+                too_old = [f for f in now_files
+                           if f < oldest_allowed]
+                for file in too_old:
+                    path = os.path.join(self.args.data, file)
+                    logging.info(f'Removing old data: {file}')
+                    os.remove(path)
 
 
 class ProfileFromFile(ProfileData):
     """
     Profile data loaded from a file.
     """
+
     def __init__(self, filepath: str):
         """
         Load profile fields from a file
@@ -129,6 +148,7 @@ class EmptyProfile(ProfileData):
     """
     Used when there isn't actually any profile data.
     """
+
     def __init__(self):
         ProfileData.__init__(self)
 
@@ -184,6 +204,14 @@ class Results:
                 f'{self.current_data.get_datetime()}')
 
 
+def _get_previous_files(args: argparse.Namespace) -> List[str]:
+    if os.path.exists(args.data):
+        return [f for f in os.listdir(args.data)
+                if f.endswith(('.json', '.json.gz'))]
+    else:
+        return []
+
+
 def _generate_diffs(args,
                     breeze_api: breeze.BreezeApi = None) -> Results:
     if args.reference_data:
@@ -192,33 +220,50 @@ def _generate_diffs(args,
         reference_data = ProfileFromFile(args.reference_data)
         current_data = ProfileFromBreeze(args, breeze_api, do_save=False)
     else:
-        prev_saved = [f for f in os.listdir(args.data)
-                      if f.endswith(('.json', '.json.gz'))]
-        prev_saved.sort(reverse=False)
+        prev_saved = _get_previous_files(args)
+        prev_saved.sort(reverse=True)
         if args.replay:
             # Generate report from the two previous runs
             if len(prev_saved) < 2:
                 # Need two files for replay
-                sys.exit(f'Need at two previous runs in {args.data}')
+                sys.exit(f'Need at two previous runs in {args.data} for replay')
             reference_data = ProfileFromFile(os.path.join(args.data,
-                                                          prev_saved[-2]))
+                                                          prev_saved[1]))
             current_data = ProfileFromFile(os.path.join(args.data,
-                                                        prev_saved[-1]))
+                                                        prev_saved[0]))
         else:
             if not prev_saved:
                 logging.warning('No previous data found. This will be big!')
                 reference_data = EmptyProfile()
             else:
                 reference_data = ProfileFromFile(os.path.join(args.data,
-                                                 prev_saved[-1]))
+                                                              prev_saved[-1]))
             current_data = ProfileFromBreeze(args, breeze_api)
 
     return Results(reference_data, current_data)
 
 
-def _verify_directory(args):
-    if not (os.access(args.data, os.W_OK | os.R_OK) and os.path.isdir(args.data)):
-        sys.exit(f"{args.data} is not a writable directory")
+def _verify_directory(args: argparse.Namespace, create=False):
+    if os.path.isdir(args.data):
+        if os.access(args.data, os.W_OK | os.R_OK):
+            return
+        msg = f'{args.data} exists but isn\'t writable'
+    elif create:
+        Path.mkdir(args.data, exist_ok=True, parents=True)
+        logging.info(f'Creating directory {args.data}')
+        return
+    else:
+        msg = f'Directory {args.data} doesn\'t exist'
+
+    logging.error(msg)
+    sys.exit(msg)
+
+
+def _list_domains(args):
+    domains = known_domains(overrides=args.email_servers)
+    print("Known email domains:")
+    for domain, text in domains.items():
+        print(f'   {domain}: {text}')
 
 
 def main(breeze_api: breeze.BreezeApi = None,
@@ -230,12 +275,6 @@ def main(breeze_api: breeze.BreezeApi = None,
     :return: None
     """
 
-    logging.basicConfig(
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        level=logging.INFO
-    )
-
-    logging.info(f'Running {" ".join(sys.argv)}')
     # First, figure out what we'll be doing
     parser = argparse.ArgumentParser('Generate report of recent Breeze changes')
     parser.add_argument('--from',
@@ -292,23 +331,62 @@ def main(breeze_api: breeze.BreezeApi = None,
                         action='store_true',
                         help="initialize from Breeze before first use "
                              "without sending report")
+    parser.add_argument('--list_domains',
+                        default=False,
+                        action='store_true',
+                        help='Print known email domains and exit')
+    parser.add_argument('--retain_days',
+                        type=int,
+                        metavar='<days to retain>',
+                        default=0,
+                        help='<Number of days to retain old data')
+    parser.add_argument('--logfile',
+                        default=DEFAULT_LOG_FILE,
+                        metavar='Log file',
+                        help='File for application logs')
+    parser.add_argument('--log_level',
+                        default='info',
+                        metavar='Log level',
+                        help='Logging level, default=info')
 
     args = parser.parse_args()
 
+    logging.basicConfig(
+        filename=args.logfile,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        level=getattr(logging, args.log_level.upper())
+    )
+
+    logging.info(f'Running {" ".join(sys.argv)}')
+
+    if args.list_domains:
+        _list_domains(args)
+        sys.exit(0)
+
     if args.list_directories:
         # Making it easy to note where users should look for files on this platform.
-        print('Default directory where email_profile_report '
-              f'stores historical data: {DEFAULT_DATA_DIR}')
-        print(f'User configuration directory: {platformdirs.user_config_dir()}')
-        print(f'Site configuration directory: {platformdirs.site_config_dir()}')
+        mailsender_configs = configured_mail_sender.config_file_list()
+        print('configured_mail_sender configuration files:')
+        for f in mailsender_configs:
+            print(f'\t{f}')
+        breeze_config = breeze.config_file_list(overrides=args.breeze_creds)
+        print('breeze_chms_api configuration files:')
+        for f in breeze_config:
+            print(f'\t{f}')
+        print(f'{APPLICATION_NAME} data directory:\n\t{args.data}')
         sys.exit(0)
 
     if args.initialize:
-        _verify_directory(args)
+        _verify_directory(args, create=True)
+        if _get_previous_files(args):
+            # Shouldn't initialize if there's already data
+            os.exit(f'Remove files from {args.data} before initializing')
         # Create first-time reference data to prevent monster first report
         current_data = ProfileFromBreeze(args, breeze_api)
         current_data.save_data()
-        print(f'Initial data saved to {current_data.save_file_name}')
+        msg = f'Initial data saved to {current_data.save_file_name}'
+        logging.info(msg)
+        print(msg)
         sys.exit(0)
 
     if not args.sender:
