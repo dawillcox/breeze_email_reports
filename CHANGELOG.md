@@ -5,7 +5,8 @@ Initial Version
 * Release 4 Nov 2023
 
 ## 1.1.0
-* Release TBD
-  * Adding logging.
+* Release 8 Nov 2023
+  * Adding log configuration.
+  * Adding first-time initialization.
   * Adding options to make setup easier.
-  * Adding document tutorial on how to configure everything
+  * Adding document tutorial on how to configure everything.
