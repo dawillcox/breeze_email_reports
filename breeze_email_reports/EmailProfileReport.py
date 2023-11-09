@@ -249,7 +249,7 @@ def _verify_directory(args: argparse.Namespace, create=False):
             return
         msg = f'{args.data} exists but isn\'t writable'
     elif create:
-        Path.mkdir(args.data, exist_ok=True, parents=True)
+        Path(args.data).mkdir(exist_ok=True, parents=True)
         logging.info(f'Creating directory {args.data}')
         return
     else:
