@@ -10,3 +10,7 @@ Initial Version
   * Adding first-time initialization.
   * Adding options to make setup easier.
   * Adding document tutorial on how to configure everything.
+
+## 1.1.1
+* Release 9 Nov 2023
+  * Create log directory if it doesn't exist

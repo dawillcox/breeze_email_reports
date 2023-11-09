@@ -357,6 +357,8 @@ def main(breeze_api: breeze.BreezeApi = None,
         out = {'stream': sys.stderr}
     else:
         out = {'filename': args.logfile}
+        directory, file = os.path.split(args.logfile)
+        Path(directory).mkdir(exist_ok=True, parents=True)
 
     logging.basicConfig(
         format="%(asctime)s [%(levelname)s] %(message)s",
