@@ -619,7 +619,7 @@ Run ``email_profile_report --list_domains`` again to make sure it sees your doma
 
 Once you've verified that your domain is set you'll have to provide your login password.
 Look for the line that ends with ``mailsender_creds.yml``. That's where your password is stored.
-Create that directory if it doesn't already exist.
+Create that file (and any necessary parent directories) if it doesn't already exist.
 
 *SOME IMPORTANT NOTES!*
 
@@ -627,7 +627,7 @@ Create that directory if it doesn't already exist.
 * Many email providers (Google and Yahoo among them) allow you to create single-use passwords,
   passwords that will only be used in one place. *If at all possible do this to create a password*
   *that will only be used to send from this computer.* Some providers may suspect fraud and block
-  your account if they see an attempt to use your password from a different place.
+  your account if they see an attempt to use your regular password from a different place.
 
 Add the following to your ``mailsender_creds.yml`` file::
 
@@ -647,7 +647,7 @@ file, readable only by you. Add the following to that file::
     breeze_url: https://yourchurch.breezechms.com
     api_key: <your API key>
 
-You'll have to get that key from Breeze support.
+You'll have to get that API key from Breeze support.
 
 ++++++++++++++++++++
 Initialize Data File
@@ -665,13 +665,6 @@ This will make sure your data directory exists, then download your Breeze profil
 and store the summary in that directory. Each subsequent run will send a report
 based on the most recent data found in that directory.
 
-Note: The raw data downloaded from Breeze can be pretty large. Depending on your
-network bandwidth and the size of your church, it can take multiple seconds. With
-a good connection my smallish church takes about 20 seconds to download. Your milage
-will vary.
-
-The data stored (compressed) for each run in our case is pretty small, only about 44K.
-
 ++++++++++++
 Run a Report
 ++++++++++++
@@ -680,4 +673,6 @@ Now you're ready to run a report::
 
     email_profile_report -f <address you're sending from> -t <receiver>,<receiver>
 
-Look back at `Email Profile Report`_ for the complete list of command line options.
+Look back at `Email Profile Report`_ for the complete list of command line options, but the
+from and to email addresses should be enough in most cases unless you want the report
+sent in a format other than HTML.
