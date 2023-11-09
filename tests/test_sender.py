@@ -100,6 +100,7 @@ class TestSender(unittest.TestCase):
                     '-b', BCC_ADDRESS,
                     '--data', self.test_dir.name,
                     '--log_level=critical',
+                    f'--logfile={os.path.join(self.test_dir.name, "test.log")}',
                     '--format', report_format] + extra_params
 
         ret = main(breeze_api=api_mock, email_sender=self.mock_sender)
@@ -252,6 +253,7 @@ class TestSender(unittest.TestCase):
 
     def test_bad_data(self):
         sys.argv = ['test', '-f', 'from@foobar', '-t', 'to@foobar',
+                    '--logfile=stdout',
                     '--log_level=critical',
                     '--data', '/no/such/dir']
         with self.assertRaises(SystemExit) as e:
@@ -296,8 +298,6 @@ class TestSender(unittest.TestCase):
         self.assertEqual(3, len(retained_files))
         self.assertFalse(files[1] in retained_files)
         self.assertTrue(files[3] in retained_files)
-
-
 
     def test_list_directories(self):
         sys.argv = ['test', '--list_directories', '--log_level=critical']

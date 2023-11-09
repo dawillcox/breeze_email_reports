@@ -93,6 +93,16 @@ with any of the following options:
   Use this before your first run. It reads your current profile data from
   Breeze and saves it as the current profile data. This will be used as
   the reference data for the first "real" report.
+--retain_days <days>
+  After running, any old data snapshots more than <days> old will be removed.
+  If you don't use this, old snapshots will be kept indefinitely.
+--logfile <file>
+  Logging information will be sent to this file. If <file> is ``stdout`` or ``stderr``
+  logging will go to that output instead.
+--loglevel <level>
+  How detailed should logging be. The default ``info`` includes some basic information,
+  warnings and critical errors. Other options are ``trace``, ``debug``, ``warning``, ``critical``.
+
 
 The report has a section for each member profile that had changes.
 First there's a row with the member name. This followed by a row for
@@ -484,7 +494,7 @@ Python Environment - Virtual or Not
 
 If you are the only user of your computer and you're unlikely to run anything
 else that needs Python, or other users of your computer are unlikely to use
-Pyton, you can skip this section. You won't be using a "virtual environment,"
+Python, you can skip this section. You won't be using a "virtual environment,"
 so ignore references to that in later sections.
 
 But here's a very brief explanation of virtual environments:
@@ -564,10 +574,10 @@ Remember the output on your system for later steps. You can rerun the command wh
 Note: The list above can be impacted if you use any of the ``email_profile_report`` options
 that tell it where to look for data. For example:
 
-* --data
-* --breeze_creds
-* --email_creds
-* --email_servers
+* ``--data``
+* ``--breeze_creds``
+* ``--email_creds``
+* ``--email_servers``
 
 If you use *any* of these here they must be used in all ``email_profile_report`` runs.
 
@@ -668,6 +678,6 @@ Run a Report
 
 Now you're ready to run a report::
 
-    email_profile_report -f <address you're sending from> -t <reciuver>,<receiver>
+    email_profile_report -f <address you're sending from> -t <receiver>,<receiver>
 
-See the documentation for other options.
+Look back at `Email Profile Report`_ for the complete list of command line options.

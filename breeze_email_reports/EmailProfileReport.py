@@ -351,10 +351,17 @@ def main(breeze_api: breeze.BreezeApi = None,
 
     args = parser.parse_args()
 
+    if args.logfile == 'stdout':
+        out = {'stream': sys.stdout}
+    elif args.logfile == 'stderr':
+        out = {'stream': sys.stderr}
+    else:
+        out = {'filename': args.logfile}
+
     logging.basicConfig(
-        filename=args.logfile,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        level=getattr(logging, args.log_level.upper())
+        level=getattr(logging, args.log_level.upper()),
+        **out
     )
 
     logging.info(f'Running {" ".join(sys.argv)}')
@@ -374,13 +381,14 @@ def main(breeze_api: breeze.BreezeApi = None,
         for f in breeze_config:
             print(f'\t{f}')
         print(f'{APPLICATION_NAME} data directory:\n\t{args.data}')
+        print(f'log output\n\t{args.logfile}')
         sys.exit(0)
 
     if args.initialize:
         _verify_directory(args, create=True)
         if _get_previous_files(args):
             # Shouldn't initialize if there's already data
-            os.exit(f'Remove files from {args.data} before initializing')
+            sys.exit(f'Remove files from {args.data} before initializing')
         # Create first-time reference data to prevent monster first report
         current_data = ProfileFromBreeze(args, breeze_api)
         current_data.save_data()
