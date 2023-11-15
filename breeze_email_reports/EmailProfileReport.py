@@ -237,7 +237,7 @@ def _generate_diffs(args,
                 reference_data = EmptyProfile()
             else:
                 reference_data = ProfileFromFile(os.path.join(args.data,
-                                                              prev_saved[-1]))
+                                                              prev_saved[0]))
             current_data = ProfileFromBreeze(args, breeze_api)
 
     return Results(reference_data, current_data)

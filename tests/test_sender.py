@@ -13,6 +13,7 @@ import sys
 from breeze_email_reports.EmailProfileReport import main
 
 # REFERENCE_FILE_NAME = 'ReferenceData.json'
+TEST_REFERENCE_WRONG_NAME = '2023-09-16T23:00:24.211429.json'
 TEST_REFERENCE_NAME = '2023-09-17T23:00:24.211429.json'
 TEST_REPLAY_NAME = '2023-10-17T23:00:24.211429.json'
 
@@ -90,6 +91,10 @@ class TestSender(unittest.TestCase):
             else:
                 with open(test_file_name, 'w') as f:
                     f.write(previous_data)
+            with open(os.path.join(self.test_dir.name, TEST_REFERENCE_WRONG_NAME),
+                      'w') as f:
+                f.write('This is bad data')
+
 
         with open(CURRENT_DATA_BREEZE, 'r') as f:
             fields, profiles = json.load(f)
