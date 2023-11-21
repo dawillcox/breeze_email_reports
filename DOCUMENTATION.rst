@@ -64,7 +64,9 @@ with any of the following options:
   This is the sending email address for the report. With a couple of exceptions
   when no report is sent, this is required.
 --to receivers
-  List email recipients, comma separated. You must specify at least --to or --bcc. Both are allowed.
+  List of email recipients, comma separated. You must specify at least one of --to, --cc, or --bcc. All are allowed.
+--cc receivers
+  List of "cc" recipients
 --bcc receivers
   List of blind receivers
 --format <html, text, or csv>

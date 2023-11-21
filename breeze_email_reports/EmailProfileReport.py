@@ -286,6 +286,10 @@ def main(breeze_api: breeze.BreezeApi = None,
                         '-t',
                         metavar='recipient(s)',
                         help='public recipients, comma separated')
+    parser.add_argument('--cc',
+                        '-c',
+                        metavar='copy recipient(s)',
+                        help='copy recipients, comma separated')
     parser.add_argument('--bcc',
                         '-b',
                         metavar='<blind recipient(s)>',
@@ -402,8 +406,8 @@ def main(breeze_api: breeze.BreezeApi = None,
     if not args.sender:
         sys.exit('--from=sender is required')
 
-    if not args.to and not args.bcc:
-        sys.exit('Either -t or -b is required')
+    if not (args.to or args.bcc or args.cc):
+        sys.exit('At least one of -t, -c, or -b is required')
 
     _verify_directory(args)
 
@@ -415,9 +419,11 @@ def main(breeze_api: breeze.BreezeApi = None,
     msg = MIMEMultipart()
     msg['Subject'] = 'Breeze profile change report'
     if args.to:
-        msg['To'] = args.to
+        msg['to'] = args.to
     if args.bcc:
-        msg['Bcc'] = args.bcc
+        msg['bcc'] = args.bcc
+    if args.cc:
+        msg['cc'] = args.cc
     diffs = results.get_diffs()
     if diffs:
         msg.attach(MIMEText(f'Breeze changes for {results.header}'))

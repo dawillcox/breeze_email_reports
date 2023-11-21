@@ -18,3 +18,7 @@ Initial Version
 ## 1.1.2
 * Release 14 Nov 2023
   * Fix selection of reference file to diff against.
+
+## 1.1.3
+* Release 21 Nov 2023
+  * Support --cc option

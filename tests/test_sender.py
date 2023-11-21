@@ -5,14 +5,12 @@ import os
 import shutil
 import unittest
 import tempfile
-# from datetime import timedelta
 from datetime import datetime, timedelta
 from io import StringIO
 from typing import Tuple, List
 import sys
 from breeze_email_reports.EmailProfileReport import main
 
-# REFERENCE_FILE_NAME = 'ReferenceData.json'
 TEST_REFERENCE_WRONG_NAME = '2023-09-16T23:00:24.211429.json'
 TEST_REFERENCE_NAME = '2023-09-17T23:00:24.211429.json'
 TEST_REPLAY_NAME = '2023-10-17T23:00:24.211429.json'
@@ -34,6 +32,7 @@ EXPECTED_TEXT = os.path.join(TEST_FILES_DIR, 'ExpectedText.txt')
 
 TO_ADDRESS = 'to@test.com'
 BCC_ADDRESS = 'bcc1@bcc.com, bcc2@bcc.com'
+CC_ADDRESS = 'cc@cc.com'
 
 
 class MockBreezeAPI:
@@ -95,7 +94,6 @@ class TestSender(unittest.TestCase):
                       'w') as f:
                 f.write('This is bad data')
 
-
         with open(CURRENT_DATA_BREEZE, 'r') as f:
             fields, profiles = json.load(f)
 
@@ -103,6 +101,7 @@ class TestSender(unittest.TestCase):
 
         sys.argv = ['test', '-f', 'from@test.com', '-t', TO_ADDRESS,
                     '-b', BCC_ADDRESS,
+                    '--cc', CC_ADDRESS,
                     '--data', self.test_dir.name,
                     '--log_level=critical',
                     f'--logfile={os.path.join(self.test_dir.name, "test.log")}',
@@ -134,8 +133,9 @@ class TestSender(unittest.TestCase):
         # Breeze changes since Sep 17 2023 11:00PM (Payload one get_payload()
         self.assertEqual('Breeze profile change report',
                          str(sent_message.get('Subject')))
-        self.assertEqual(TO_ADDRESS, sent_message.get('To'))
-        self.assertEqual(BCC_ADDRESS, sent_message.get('Bcc'))
+        self.assertEqual(TO_ADDRESS, sent_message.get('to'))
+        self.assertEqual(BCC_ADDRESS, sent_message.get('bcc'))
+        self.assertEqual(CC_ADDRESS, sent_message.get('cc'))
 
         sent_message = self.mock_sender.result
         payloads = sent_message.get_payload()
@@ -254,7 +254,7 @@ class TestSender(unittest.TestCase):
         sys.argv = ['test', '-f', 'from@foobar', ]
         with self.assertRaises(SystemExit) as se:
             main()
-        self.assertEqual('Either -t or -b is required', se.exception.code)
+        self.assertEqual('At least one of -t, -c, or -b is required', se.exception.code)
 
     def test_bad_data(self):
         sys.argv = ['test', '-f', 'from@foobar', '-t', 'to@foobar',
