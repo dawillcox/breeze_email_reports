@@ -22,3 +22,7 @@ Initial Version
 ## 1.1.3
 * Release 21 Nov 2023
   * Support --cc option
+
+## 1.1.4
+* Release 7 Dec 2023
+  * Fix formatting of results needing html escaping.

@@ -68,7 +68,11 @@ class _ReportFormatter:
 def _escape_html_value(val: Union[str, List[str]]) -> str:
     if val:
         if isinstance(val, list):
-            return '<br/>'.join([html.escape(v).replace(';', '<br/>') for v in val])
+            # For lists in HTML break each item on semicolons (for addresses).
+            # But we have to do that before the html.escape() because that
+            # introduces semicolons.
+            return '<br/>'.join([html.escape(i) for elt in val
+                                 for i in elt.split(';')])
         else:
             return html.escape(val)
     else:

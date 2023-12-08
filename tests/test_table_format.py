@@ -2,7 +2,7 @@ import os
 from io import StringIO
 from breeze_email_reports.table_format import (_HTMLFormatter, ColSpec,
                                                _splitval, _TextFormatter,
-                                               _CSVFormatter)
+                                               _CSVFormatter, _escape_html_value)
 import unittest
 
 TEST_DIR = os.path.join(os.path.split(__file__)[0], 'split_test_files')
@@ -13,6 +13,13 @@ EXPECT_CSV_FILE = os.path.join(TEST_DIR, 'ExpectedTableCSV.csv')
 
 
 class TestSplitVal(unittest.TestCase):
+    def test_html_escape(self):
+        val = ['a;&b', '#z', '<']
+        ret = _escape_html_value(val)
+        self.assertEqual('a<br/>&amp;b<br/>#z<br/>&lt;', ret)
+        ret = _escape_html_value('& <')
+        self.assertEqual(ret, '&amp; &lt;')
+
     def test_splitVal(self):
         # c0_width = 15
         # c1_width = 20
