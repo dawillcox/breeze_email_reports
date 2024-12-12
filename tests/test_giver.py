@@ -228,26 +228,26 @@ class TestGiverSender(unittest.TestCase):
     def test_no_funds(self):
         sys.argv = ['test', '--bcc', 'foo@bar', '-f', 'foo']
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual('One or more funds is required', se.exception.code)
 
     def test_bad_fund(self):
         badfund = 'nofund'
         sys.argv = ['test', '--bcc', 'foo@bar', '--from', 'test@foo.com', badfund]
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual(f'Fund "{badfund}" not found', se.exception.code)
 
     def test_no_sender(self):
         sys.argv = ['test', '--bcc', 'foo@bar', 'afund']
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual('--from is required', se.exception.code)
 
     def test_no_receiver(self):
         sys.argv = ['test', '--from', 'too@bar', 'afund']
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual('At least one of --to, --cc or --bcc is required',
                          se.exception.code)
 
