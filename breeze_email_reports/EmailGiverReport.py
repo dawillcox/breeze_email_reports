@@ -201,10 +201,10 @@ def main(breeze_api: breeze.BreezeApi = None,
     #                     help='Fund to include')
 
     args = parse_arguments(parser, APPLICATION_NAME,
-                           [[['funds'],
+                           [(['funds'],
                              {'nargs': '*',
                               'metavar': 'Fund(s)',
-                              'help': 'Fund(s) to include'}]])
+                              'help': 'Fund(s) to include'})])
 
     if not args.sender:
         sys.exit('--from is required')

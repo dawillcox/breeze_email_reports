@@ -85,7 +85,8 @@ def parse_arguments(parser: argparse.ArgumentParser,
         print('breeze_chms_api configuration files:')
         for f in breeze_config:
             print(f'\t{f}')
-        print(f'{application_name} data directory:\n\t{args.data}')
+        if hasattr(args, 'data'):
+            print(f'{application_name} data directory:\n\t{args.data}')
         print(f'log output\n\t{args.logfile}')
         sys.exit(0)
 

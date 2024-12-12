@@ -111,6 +111,10 @@ class TestGiverSender(unittest.TestCase):
         self.saved_stdout = None
         self.mock_api = None
 
+    def make_api(self, fields=[], profiles=[], funds=[FUNDS], contributions=[]):
+        self.mock_api = MockBreezeAPI(fields, profiles, funds=funds,
+                                      contributions=contributions)
+
     def runTest(self,
                 # report_format: str = 'text',
                 contributions: List[str] = [GIFTS],
@@ -136,8 +140,8 @@ class TestGiverSender(unittest.TestCase):
             with open(extra, 'r') as f:
                 profiles += (json.loads(f.read()))
 
-        self.mock_api = MockBreezeAPI(fields, profiles, funds=[FUNDS],
-                                      contributions=contributions)
+        self.make_api(fields=fields, profiles=profiles, funds=[FUNDS],
+                      contributions=contributions)
 
         sys.argv = ['test', '-f', 'from@test.com', '--to', TO_ADDRESS,
                     '--bcc', BCC_ADDRESS,
@@ -227,11 +231,13 @@ class TestGiverSender(unittest.TestCase):
 
     def test_no_funds(self):
         sys.argv = ['test', '--bcc', 'foo@bar', '-f', 'foo']
+        self.make_api()
         with self.assertRaises(SystemExit) as se:
             main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual('One or more funds is required', se.exception.code)
 
     def test_bad_fund(self):
+        self.make_api()
         badfund = 'nofund'
         sys.argv = ['test', '--bcc', 'foo@bar', '--from', 'test@foo.com', badfund]
         with self.assertRaises(SystemExit) as se:
@@ -239,12 +245,14 @@ class TestGiverSender(unittest.TestCase):
         self.assertEqual(f'Fund "{badfund}" not found', se.exception.code)
 
     def test_no_sender(self):
+        self.make_api()
         sys.argv = ['test', '--bcc', 'foo@bar', 'afund']
         with self.assertRaises(SystemExit) as se:
             main(breeze_api=self.mock_api, email_sender=self.mock_sender)
         self.assertEqual('--from is required', se.exception.code)
 
     def test_no_receiver(self):
+        self.make_api()
         sys.argv = ['test', '--from', 'too@bar', 'afund']
         with self.assertRaises(SystemExit) as se:
             main(breeze_api=self.mock_api, email_sender=self.mock_sender)
@@ -252,6 +260,7 @@ class TestGiverSender(unittest.TestCase):
                          se.exception.code)
 
     def test_no_contributions(self):
+        self.make_api()
         start_date = '2024-10-01'
         end_date = '2024-11-15'
         self.runTest(extra_params=[
@@ -274,6 +283,12 @@ class TestGiverSender(unittest.TestCase):
         pl0 = payloads[0]
         self.assertEqual(pl0.get_content_subtype(), 'plain')
         self.assertEqual(pl0.get_payload(), 'No contributions found')
+
+    def test_list_dir(self):
+        sys.argv = ['test', '--list_directories']
+        with self.assertRaises(SystemExit) as se:
+            main(breeze_api=self.mock_api, email_sender=self.mock_sender)
+        self.assertEqual(se.exception.code, 0)
 
     def date_range(self,
                    begin: Union[None, str],
