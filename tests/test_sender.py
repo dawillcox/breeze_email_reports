@@ -238,13 +238,13 @@ class TestSender(unittest.TestCase):
         # Exception if no "to"
         sys.argv = ['test', '-b', 'foo@bar']
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual('--from=sender is required', se.exception.code)
 
     def test_no_to(self):
         sys.argv = ['test', '-f', 'from@foobar', ]
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual('At least one of -t, -c, or -b is required', se.exception.code)
 
     def test_bad_data(self):
@@ -317,7 +317,7 @@ class TestSender(unittest.TestCase):
         self.saved_stdout = sys.stdout
         sys.stdout = capture_out
         with self.assertRaises(SystemExit) as e:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual(e.exception.code, 0,
                          "List domains shouldn't cause error")
         sys.stout = self.saved_stdout
