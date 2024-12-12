@@ -30,3 +30,7 @@ Initial Version
 ## 1.2.0
 * Release 12 Dec 2024
   * Add email_giver_report.
+
+## 1.2.0.1
+* Release 12 Dec 2024
+  * Documentation change only. Update README to include email_giver_report.
