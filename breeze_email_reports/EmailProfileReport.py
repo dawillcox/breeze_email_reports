@@ -2,8 +2,7 @@ from io import StringIO
 from pathlib import Path
 from typing import List, Tuple, Dict, Union
 
-import configured_mail_sender
-from configured_mail_sender import create_sender, MailSender, known_domains
+from configured_mail_sender import create_sender, MailSender
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from breeze_chms_api.profile_helper import ProfileHelper, join_dicts, profile_compare
@@ -17,14 +16,16 @@ import argparse
 import os
 import platformdirs
 import datetime
+from breeze_email_reports._common import parse_arguments, check_date
 
-from breeze_email_reports.table_format import ColSpec, _HTMLFormatter, _CSVFormatter, _TextFormatter
+from breeze_email_reports.table_format import ColSpec, _HTMLFormatter, _CSVFormatter, \
+    _TextFormatter
 
 DEFAULT_DATA_DIR = platformdirs.user_data_dir('BreezeProfiles')
 DEFAULT_COLUMN_WIDTHS = '30,20,20'
 
 APPLICATION_NAME = 'email_profile_report'
-DEFAULT_LOG_FILE = os.path.join(platformdirs.user_log_dir(), APPLICATION_NAME + '.log')
+# DEFAULT_LOG_FILE = os.path.join(platformdirs.user_log_dir(), APPLICATION_NAME + '.log')
 
 
 class ProfileData:
@@ -83,7 +84,6 @@ class ProfileFromBreeze(ProfileData):
         ProfileData.__init__(self)
         self.do_save = do_save
         self.args = args
-        ProfileData.__init__(self)
         breeze_api = breeze_api if breeze_api \
             else breeze.breeze_api(overrides=args.breeze_creds)
         profile_helper = ProfileHelper(breeze_api.get_profile_fields())
@@ -259,11 +259,11 @@ def _verify_directory(args: argparse.Namespace, create=False):
     sys.exit(msg)
 
 
-def _list_domains(args):
-    domains = known_domains(overrides=args.email_servers)
-    print("Known email domains:")
-    for domain, text in domains.items():
-        print(f'   {domain}: {text}')
+# def _list_domains(args):
+#     domains = known_domains(overrides=args.email_servers)
+#     print("Known email domains:")
+#     for domain, text in domains.items():
+#         print(f'   {domain}: {text}')
 
 
 def main(breeze_api: breeze.BreezeApi = None,
@@ -326,69 +326,69 @@ def main(breeze_api: breeze.BreezeApi = None,
                         help='send differences between last two snapshots',
                         default=False,
                         action='store_true')
-    parser.add_argument('--list_directories',
-                        default=False,
-                        action='store_true',
-                        help='list data and configuration directories and exit')
+    # parser.add_argument('--list_directories',
+    #                     default=False,
+    #                     action='store_true',
+    #                     help='list data and configuration directories and exit')
     parser.add_argument('--initialize',
                         default=False,
                         action='store_true',
                         help="initialize from Breeze before first use "
                              "without sending report")
-    parser.add_argument('--list_domains',
-                        default=False,
-                        action='store_true',
-                        help='Print known email domains and exit')
+    # parser.add_argument('--list_domains',
+    #                     default=False,
+    #                     action='store_true',
+    #                     help='Print known email domains and exit')
     parser.add_argument('--retain_days',
                         type=int,
                         metavar='<days to retain>',
                         default=0,
                         help='<Number of days to retain old data')
-    parser.add_argument('--logfile',
-                        default=DEFAULT_LOG_FILE,
-                        metavar='Log file',
-                        help='File for application logs')
-    parser.add_argument('--log_level',
-                        default='info',
-                        metavar='Log level',
-                        help='Logging level, default=info')
+    # parser.add_argument('--logfile',
+    #                     default=DEFAULT_LOG_FILE,
+    #                     metavar='Log file',
+    #                     help='File for application logs')
+    # parser.add_argument('--log_level',
+    #                     default='info',
+    #                     metavar='Log level',
+    #                     help='Logging level, default=info')
 
-    args = parser.parse_args()
+    args = parse_arguments(parser, APPLICATION_NAME)
 
-    if args.logfile == 'stdout':
-        out = {'stream': sys.stdout}
-    elif args.logfile == 'stderr':
-        out = {'stream': sys.stderr}
-    else:
-        out = {'filename': args.logfile}
-        directory, file = os.path.split(args.logfile)
-        Path(directory).mkdir(exist_ok=True, parents=True)
+    # if args.logfile == 'stdout':
+    #     out = {'stream': sys.stdout}
+    # elif args.logfile == 'stderr':
+    #     out = {'stream': sys.stderr}
+    # else:
+    #     out = {'filename': args.logfile}
+    #     directory, file = os.path.split(args.logfile)
+    #     Path(directory).mkdir(exist_ok=True, parents=True)
 
-    logging.basicConfig(
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        level=getattr(logging, args.log_level.upper()),
-        **out
-    )
+    # logging.basicConfig(
+    #     format="%(asctime)s [%(levelname)s] %(message)s",
+    #     level=getattr(logging, args.log_level.upper()),
+    #     **out
+    # )
 
-    logging.info(f'Running {" ".join(sys.argv)}')
+    # logging.info(f'Running {" ".join(sys.argv)}')
 
-    if args.list_domains:
-        _list_domains(args)
-        sys.exit(0)
-
-    if args.list_directories:
-        # Making it easy to note where users should look for files on this platform.
-        mailsender_configs = configured_mail_sender.config_file_list()
-        print('configured_mail_sender configuration files:')
-        for f in mailsender_configs:
-            print(f'\t{f}')
-        breeze_config = breeze.config_file_list(overrides=args.breeze_creds)
-        print('breeze_chms_api configuration files:')
-        for f in breeze_config:
-            print(f'\t{f}')
-        print(f'{APPLICATION_NAME} data directory:\n\t{args.data}')
-        print(f'log output\n\t{args.logfile}')
-        sys.exit(0)
+    # if args.list_domains:
+    #     _list_domains(args)
+    #     sys.exit(0)
+    #
+    # if args.list_directories:
+    #     # Making it easy to note where users should look for files on this platform.
+    #     mailsender_configs = configured_mail_sender.config_file_list()
+    #     print('configured_mail_sender configuration files:')
+    #     for f in mailsender_configs:
+    #         print(f'\t{f}')
+    #     breeze_config = breeze.config_file_list(overrides=args.breeze_creds)
+    #     print('breeze_chms_api configuration files:')
+    #     for f in breeze_config:
+    #         print(f'\t{f}')
+    #     print(f'{APPLICATION_NAME} data directory:\n\t{args.data}')
+    #     print(f'log output\n\t{args.logfile}')
+    #     sys.exit(0)
 
     if args.initialize:
         _verify_directory(args, create=True)
@@ -415,7 +415,10 @@ def main(breeze_api: breeze.BreezeApi = None,
 
     widths = [int(w) for w in args.columns.split(',')]
     names = ['Field', 'Old', 'New']
-    column_specs = [ColSpec(names[i], width=widths[i]) for i in range(3)]
+    header_attrs = header_attrs = {'text-align': 'start'}
+    column_specs = [ColSpec(names[i],
+                            width=widths[i],
+                            header_attrs=header_attrs) for i in range(3)]
     msg = MIMEMultipart()
     msg['Subject'] = 'Breeze profile change report'
     if args.to:
@@ -426,9 +429,10 @@ def main(breeze_api: breeze.BreezeApi = None,
         msg['cc'] = args.cc
     diffs = results.get_diffs()
     if diffs:
-        msg.attach(MIMEText(f'Breeze changes for {results.header}'))
+        msg.attach(MIMEText(f'Breeze changes for {results.header}\n'))
         if args.format == 'html':
-            formatter = _HTMLFormatter(column_specs)
+            formatter = _HTMLFormatter(column_specs,
+                                       top_attrs={'background-color': 'LightBlue'})
         elif args.format == 'csv':
             formatter = _CSVFormatter(column_specs)
         else:
@@ -459,4 +463,10 @@ def main(breeze_api: breeze.BreezeApi = None,
 
 
 if __name__ == "__main__":
+    # sys.argv = [
+    #     'example',
+    #     '--from=daw30410@yahoo.com',
+    #     '--to=daw30410@yahoo.com',
+    #     '--replay'
+    # ]
     main()
