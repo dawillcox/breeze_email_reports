@@ -1,17 +1,36 @@
-<table border="1" style="border:1px solid #000000;border-collapse:collapse" cellpadding="4">
+<head>
+<style>
+#r1 td:nth-child(1) {  }
+th td:nth-child(1) {  }
+#r1 td:nth-child(2) {  }
+th td:nth-child(2) {  }
+#r1 td:nth-child(3) {  }
+th td:nth-child(3) {  }
+#rn td:nth-child(1) { }
+#rn td:nth-child(2) { }
+#hr {  }
+th {  }
+</style>
+</head>
+<body>
+<table border="1" style="border:1px thick double black";border-collapse:collapse" cellpadding="4">
+
  <tr>
-  <th >c0</th>
-  <th >c1</th>
-  <th >c2</th>
+  <th>c0</th>
+  <th>c1</th>
+  <th>c2</th>
  </tr>
-<tr><td colspan="3" bgcolor="LightBlue"><b>aname</b></td></tr> <tr>
-  <td >afield</td>
-  <td >oldval</td>
-  <td >newval</td>
+<tr id="hr">
+  <td colspan="3" <b>aname</b></td>
+</tr>
+ <tr id="rn">
+  <td>afield</td>
+  <td>oldval</td>
+  <td>newval</td>
  </tr>
- <tr>
-  <td >notherfield:withbreak</td>
-  <td > </td>
-  <td >new1<br/>new2 with a long value</td>
+ <tr id="rn">
+  <td>notherfield:withbreak</td>
+  <td> </td>
+  <td>new1<br/>new2 with a long value</td>
  </tr>
 </table>

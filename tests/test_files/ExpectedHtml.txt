@@ -1,147 +1,175 @@
-<table border="1" style="border:1px solid #000000;border-collapse:collapse" cellpadding="4">
+<head>
+<style>
+#r1 td:nth-child(1) { text-align: start; }
+th td:nth-child(1) { text-align: start; }
+#r1 td:nth-child(2) { text-align: start; }
+th td:nth-child(2) { text-align: start; }
+#r1 td:nth-child(3) { text-align: start; }
+th td:nth-child(3) { text-align: start; }
+#rn td:nth-child(1) { text-align: start;}
+#rn td:nth-child(2) { text-align: start;}
+#hr { background-color: LightBlue; }
+th { text-align: start; }
+</style>
+</head>
+<body>
+<table border="1" style="border:1px thick double black";border-collapse:collapse" cellpadding="4">
+
  <tr>
-  <th >Field</th>
-  <th >Old</th>
-  <th >New</th>
+  <th>Field</th>
+  <th>Old</th>
+  <th>New</th>
  </tr>
-<tr><td colspan="3" bgcolor="LightBlue"><b>Alast, Firstname1</b></td></tr> <tr>
-  <td >Spiritual Gifts:Spiritual Gifts</td>
-  <td > </td>
-  <td >Exhortation</td>
+<tr id="hr">
+  <td colspan="3" <b>Alast, Firstname1</b></td>
+</tr>
+ <tr id="rn">
+  <td>Spiritual Gifts:Spiritual Gifts</td>
+  <td> </td>
+  <td>Exhortation</td>
  </tr>
-<tr><td colspan="3" bgcolor="LightBlue"><b>Blast, Firstname2 Lee</b></td></tr> <tr>
-  <td >Name</td>
-  <td >Blast, Firstname2 Lee</td>
-  <td >Blast, Firstname2 (Harry) Lee</td>
+<tr id="hr">
+  <td colspan="3" <b>Blast, Firstname2 Lee</b></td>
+</tr>
+ <tr id="rn">
+  <td>Name</td>
+  <td>Blast, Firstname2 Lee</td>
+  <td>Blast, Firstname2 (Harry) Lee</td>
  </tr>
- <tr>
-  <td >Communication:Phone</td>
-  <td >mobile:(333) 543-2100(private)(no text)</td>
-  <td >mobile:(333) 543-2100(private)</td>
+ <tr id="rn">
+  <td>Communication:Phone</td>
+  <td>mobile:(333) 543-2100(private)(no text)</td>
+  <td>mobile:(333) 543-2100(private)</td>
  </tr>
- <tr>
-  <td >Communication:Email</td>
-  <td >xyzzy@plover.com</td>
-  <td >xyzzy@plover.com(private)</td>
+ <tr id="rn">
+  <td>Communication:Email</td>
+  <td>xyzzy@plover.com</td>
+  <td>xyzzy@plover.com(private)</td>
  </tr>
- <tr>
-  <td >Spiritual Gifts:Spiritual Gifts</td>
-  <td >Flimflammery</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Spiritual Gifts:Spiritual Gifts</td>
+  <td>Flimflammery</td>
+  <td> </td>
  </tr>
-<tr><td colspan="3" bgcolor="LightBlue"><b>Bonzo, NewFirst</b></td></tr> <tr>
-  <td >Name</td>
-  <td > </td>
-  <td >Bonzo, NewFirst</td>
+<tr id="hr">
+  <td colspan="3" <b>Bonzo, NewFirst</b></td>
+</tr>
+ <tr id="rn">
+  <td>Name</td>
+  <td> </td>
+  <td>Bonzo, NewFirst</td>
  </tr>
- <tr>
-  <td >Communication:Address</td>
-  <td > </td>
-  <td >205 S Pleasant St<br/>Los Angeles CA 12456</td>
+ <tr id="rn">
+  <td>Communication:Address</td>
+  <td> </td>
+  <td>205 S Pleasant St<br/>Los Angeles CA 12456</td>
  </tr>
- <tr>
-  <td >Communication:Giving Statements</td>
-  <td > </td>
-  <td >Family (Default)</td>
+ <tr id="rn">
+  <td>Communication:Giving Statements</td>
+  <td> </td>
+  <td>Family (Default)</td>
  </tr>
-<tr><td colspan="3" bgcolor="LightBlue"><b>Coxwell, Duveed (Davey) Aston</b></td></tr> <tr>
-  <td >Name</td>
-  <td >Coxwell, Duveed (Davey) Aston</td>
-  <td > </td>
+<tr id="hr">
+  <td colspan="3" <b>Coxwell, Duveed (Davey) Aston</b></td>
+</tr>
+ <tr id="rn">
+  <td>Name</td>
+  <td>Coxwell, Duveed (Davey) Aston</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Main:Preferred Pronouns</td>
-  <td >He/Him/His/Himself</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Main:Preferred Pronouns</td>
+  <td>He/Him/His/Himself</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Main:Age</td>
-  <td >1845-04-07</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Main:Age</td>
+  <td>1845-04-07</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Main:Marital Status</td>
-  <td >Married</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Main:Marital Status</td>
+  <td>Married</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Main:Anniversary</td>
-  <td >02/25/1978</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Main:Anniversary</td>
+  <td>02/25/1978</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Main:Include in directory (online and printed)?</td>
-  <td >Include (Default for adults)</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Main:Include in directory (online and printed)?</td>
+  <td>Include (Default for adults)</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Church Relationships:Church Relationship</td>
-  <td >Active</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Church Relationships:Church Relationship</td>
+  <td>Active</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Church Relationships:Position(s) Holding or Held</td>
-  <td >AV Team<br/>Choir<br/>Clerk<br/>Computers<br/>Financial Secretary</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Church Relationships:Position(s) Holding or Held</td>
+  <td>AV Team<br/>Choir<br/>Clerk<br/>Computers<br/>Financial Secretary</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Education &amp; Work:Employer</td>
-  <td >Retired</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Education &amp; Work:Employer</td>
+  <td>Retired</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Communication:Phone</td>
-  <td >home:(217) 318-6000<br/>mobile:(217) 318-5000</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Communication:Phone</td>
+  <td>home:(217) 318-6000<br/>mobile:(217) 318-5000</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Communication:Email</td>
-  <td >author@books.com</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Communication:Email</td>
+  <td>author@books.com</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Communication:Address</td>
-  <td >12345 E Grotto Av<br/>Canyon MO 54321</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Communication:Address</td>
+  <td>12345 E Grotto Av<br/>Canyon MO 54321</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Communication:Preferred Contact Method(s)</td>
-  <td >Cell Phone<br/>Email</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Communication:Preferred Contact Method(s)</td>
+  <td>Cell Phone<br/>Email</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Communication:Giving Statements</td>
-  <td >Family (Default)</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Communication:Giving Statements</td>
+  <td>Family (Default)</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Spiritual Gifts:Spiritual Gifts</td>
-  <td >Music (Vocal)</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Spiritual Gifts:Spiritual Gifts</td>
+  <td>Music (Vocal)</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Membership Status:Joined As</td>
-  <td >Transfer</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Membership Status:Joined As</td>
+  <td>Transfer</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Membership Status:Member Type</td>
-  <td >Member</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Membership Status:Member Type</td>
+  <td>Member</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Membership Status:Member Number</td>
-  <td >757</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Membership Status:Member Number</td>
+  <td>757</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >Membership Status:Date Joined</td>
-  <td >03/04/2015</td>
-  <td > </td>
+ <tr id="rn">
+  <td>Membership Status:Date Joined</td>
+  <td>03/04/2015</td>
+  <td> </td>
  </tr>
- <tr>
-  <td >family</td>
-  <td >Coxwell, Duveed (Spouse)<br/>Coxwill, Eileen (Spouse)</td>
-  <td > </td>
+ <tr id="rn">
+  <td>family</td>
+  <td>Coxwell, Duveed (Spouse)<br/>Coxwill, Eileen (Spouse)</td>
+  <td> </td>
  </tr>
 </table>

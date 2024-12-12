@@ -122,15 +122,6 @@ class TestSender(unittest.TestCase):
                      extra_params=['--reference_data', TEST_PREVIOUS_DATA])
 
         sent_message = self.mock_sender.result
-        # daw30410@yahoo.com
-        # bcc1@foo,bcc2@foo
-        # Breeze profile change report
-        # [<email.mime.text.MIMEText object at 0x10e514cd0>, <email.mime.text.MIMEText object at 0x10edb8390>]
-        # ['Content-Type', 'MIME-Version', 'Content-Transfer-Encoding']
-        # ['text/plain; charset="us-ascii"', '1.0', '7bit']
-        # ['Content-Type', 'MIME-Version', 'Content-Transfer-Encoding']
-        # ['text/html; charset="us-ascii"', '1.0', '7bit']
-        # Breeze changes since Sep 17 2023 11:00PM (Payload one get_payload()
         self.assertEqual('Breeze profile change report',
                          str(sent_message.get('Subject')))
         self.assertEqual(TO_ADDRESS, sent_message.get('to'))
@@ -146,7 +137,7 @@ class TestSender(unittest.TestCase):
                         startswith('Breeze changes for Unknown thru'))
         self.assertEqual(pl1.get_content_subtype(), 'html')
         got = str(pl1.get_payload())
-        # with open(EXPECTED_TABLE, 'w') as f:
+        # with open(EXPECTED_TABLE+'.txt', 'w') as f:
         #     f.write(got)
         with open(EXPECTED_TABLE, 'r') as f:
             ref = f.read()
@@ -160,7 +151,7 @@ class TestSender(unittest.TestCase):
         self.assertEqual(TO_ADDRESS, sent_message.get('To'))
         self.assertEqual(BCC_ADDRESS, sent_message.get('Bcc'))
 
-        sent_message = self.mock_sender.result
+        # sent_message = self.mock_sender.result
         payloads = sent_message.get_payload()
         pl0 = payloads[0]
         pl1 = payloads[1]
@@ -192,7 +183,7 @@ class TestSender(unittest.TestCase):
         pl1 = payloads[1]
         self.assertEqual(pl0.get_content_subtype(), 'plain')
         self.assertEqual(
-            'Breeze changes for Sep 17 2023 11:00PM thru Oct 17 2023 11:00PM',
+            'Breeze changes for Sep 17 2023 11:00PM thru Oct 17 2023 11:00PM\n',
             str(pl0.get_payload()))
         # self.assertTrue(str(pl0.get_payload()).
         #                 startswith('Breeze changes for Unknown thru'))
@@ -247,13 +238,13 @@ class TestSender(unittest.TestCase):
         # Exception if no "to"
         sys.argv = ['test', '-b', 'foo@bar']
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual('--from=sender is required', se.exception.code)
 
     def test_no_to(self):
         sys.argv = ['test', '-f', 'from@foobar', ]
         with self.assertRaises(SystemExit) as se:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual('At least one of -t, -c, or -b is required', se.exception.code)
 
     def test_bad_data(self):
@@ -326,7 +317,7 @@ class TestSender(unittest.TestCase):
         self.saved_stdout = sys.stdout
         sys.stdout = capture_out
         with self.assertRaises(SystemExit) as e:
-            main()
+            main(email_sender=self.mock_sender)
         self.assertEqual(e.exception.code, 0,
                          "List domains shouldn't cause error")
         sys.stout = self.saved_stdout

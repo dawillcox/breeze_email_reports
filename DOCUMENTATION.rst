@@ -14,6 +14,8 @@ Table of Contents
         * `Text Format`_
         * `CSV Format`_
 
+* `Email Giver Report`_
+
 * `Configuring Dependent Packages`_
     * `Platformdirs`_
     * `Configured Mail Sender`_
@@ -276,6 +278,79 @@ And the csv attachment thus::
     ,Membership Status:Date Joined,03/04/2015,
     ,family,"Coxwell, Duveed (Spouse)",
     ,,"Coxwill, Eileen (Spouse)",
+
+------------------
+Email Giver Report
+------------------
+The ``email_giver_report`` command emails a report of giving to a set of funds.
+The report includes name and contact information for each giver and details of each
+gift within the specified date range. This is typically used when there's a giving fund for a
+special program (memorial funds, for example, or a special outreach program) and
+there's a dedicated person or team who sends specific thanks for such gifts
+in addition to your normal giving statements.
+
+The report will look something like this (from test data):
+
+.. image:: SampleGiverReport.png
+
+The command is issued as:
+
+::
+
+    email_giver_report [options] fund [fund ...]
+
+with any of the following options:
+
+--from sender
+  This is the sending email address for the report. With a couple of exceptions
+  when no report is sent, this is required.
+--to receivers
+  These are the "public" recipients of the report, comma-separated. These will
+  will be in the "To:" part of the email.
+--cc receivers
+  Comma-separated list of "cc" recipients.
+--bcc
+  "Blind copy" recipients. They get the emailed report but don't appear in other
+  recipients' emails.
+--totals
+  If this is given the report will include a total when a giver made several contributions.
+--summary
+  Only the total for each giver is shown. And no notes.
+--start YYYY-MM-DD
+  The first date for gifts to report.
+--end YYYY-MM-DD
+  The last date for gifts to report.
+--logfile <file for logging>
+  If this is ``stdout`` or ``stderr`` log output will go there, otherwise this
+  is the path to a log file.
+--log_level <logging level>
+  How detailed do you want the log to be?
+
+The above are all you normally need. You can use these if your configuration of the
+dependent packages isn't in the normal place:
+
+--breeze_creds <credential file>
+  The file with your Breeze API credentials.
+--email_creds <credential file>
+  File with your email passwords.
+--email_servers <servers file>
+  File with configuration with how to contact your email servers.
+
+Plus some options to report your local configuration:
+
+--list_directories
+  Print a list of directories where the various configuration files go.
+--list_domains
+  Print a list of known email domains.
+
+The date range of gifts is determined as follows:
+
+* If both ``--start`` and ``--end`` are given those are the dates for the report.
+* If only ``--start`` is given, only gifts from that date to "today" are included.
+* If only ``--end`` is given, gifts from the beginning of that year to the given date are included.
+* If neither are given, gifts from the previous month are included. This lets you run a report
+  early each month to send gifts from the previous month.
+
 
 ------------------------------
 Configuring Dependent Packages
