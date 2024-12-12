@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1816906",
+    "name": "Budget",
+    "custom_id": "",
+    "tax_deductible": "1",
+    "group_id": "3942",
+    "is_default": "1",
+    "created_on": "2023-09-20 12:30:18",
+    "updated_at": "2024-01-07 15:22:02",
+    "archived": "0"
+  },
+  {
+    "id": "1816907",
+    "name": "Budget (Non Exempt)",
+    "custom_id": "",
+    "tax_deductible": "0",
+    "group_id": "3942",
+    "is_default": "0",
+    "created_on": "2023-09-20 12:30:48",
+    "updated_at": "2024-01-07 15:22:02",
+    "archived": "0"
+  },
+  {
+    "id": "1901063",
+    "name": "Memorial",
+    "custom_id": "",
+    "tax_deductible": "1",
+    "group_id": "3947",
+    "is_default": "0",
+    "created_on": "2024-07-30 20:22:41",
+    "updated_at": "2024-07-30 20:22:41",
+    "archived": "0"
+  },
+  {
+    "id": "1520829",
+    "name": "Rents",
+    "custom_id": "",
+    "tax_deductible": "0",
+    "group_id": "3945",
+    "is_default": "0",
+    "created_on": "2018-12-28 22:39:13",
+    "updated_at": "2024-01-07 15:22:02",
+    "archived": "0"
+  }
+]
